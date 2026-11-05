@@ -1,26 +1,26 @@
 # toolkit
 
-Cross-app software-development practices for Simon's apps (Bille, Profe, Chatty, …) and the agents that build them. The goal is that a process that works well in one app becomes the standard for all of them.
+A generic collection of software-development practices, packaged as skills for coding agents. Each skill turns a process that worked in real projects into steps, rules and thresholds an agent can follow and verify.
 
 ## Install
 
-Uses the [`skills`](https://github.com/vercel-labs/skills) CLI, same as `mattpocock/skills`:
+Uses the [skills CLI](https://github.com/vercel-labs/skills):
 
 ```bash
-# all skills, globally, for Claude Code and Cursor
+# All skills, globally, for Claude Code and Cursor
 npx skills add Simonpedro/toolkit -g -a claude-code -a cursor -y
 
-# one skill
-npx skills add Simonpedro/toolkit --skill ux-complexity-gate -g
+# A single skill
+npx skills add Simonpedro/toolkit -g -a claude-code -a cursor -y --skill <name>
 
-# see what's available
+# List available skills
 npx skills add Simonpedro/toolkit --list
 
-# pull the latest versions
+# Update installed skills
 npx skills update
 ```
 
-Drop `-g` to install into the current project instead.
+Drop `-g` to install into the current project instead of globally.
 
 ## Structure
 

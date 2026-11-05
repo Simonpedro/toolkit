@@ -9,7 +9,7 @@ description: >-
 ---
 # Fidelity gate: design vs. implementation
 
-Comes from Bille's process (web and Android, October 2026). Home went from 7.26 % differing pixels to 0.03 %. The core idea: an agent doesn't get closer to the design because you describe it better, but because it can measure how far off it is. **The number says where to look; the review decides.**
+Proven in production on a web + Android app: one run took a home screen from 7.26 % to 0.03 % differing pixels. The core idea: an agent doesn't get closer to the design because you describe it better, but because it can measure how far off it is. **The number says where to look; the review decides.**
 
 ## Roles
 
@@ -34,16 +34,16 @@ Comes from Bille's process (web and Android, October 2026). Home went from 7.26 
 ## 2. Reproducible screenshots on both sides
 
 - Same viewport, DPR 1, theme, locale and time zone, plus fixed date, animations off, fonts loaded and the same data.
-- **Web:** Playwright against the real app. **Android:** Robolectric + Roborazzi (Compose on the JVM, no emulator). Since they are tests, any PR regenerates them. **iOS:** an equivalent snapshot test (not tried yet).
+- **Web:** Playwright against the real app. **Android:** Robolectric + Roborazzi (Compose on the JVM, no emulator). Since they are tests, any PR regenerates them. **iOS:** an equivalent snapshot test (e.g., swift-snapshot-testing).
 - Whatever the OS draws (status bar, gestures, keyboard) is masked.
-- The mockup is rendered to PNG with Playwright at the same size. Sizes Bille used: 390×844 and 1440×900 on web, 412×915 dp on Android.
+- The mockup is rendered to PNG with Playwright at the same size. Example sizes: 390×844 and 1440×900 on web, 412×915 dp on Android.
 
 ## 3. Region-based comparator
 
 - **One matrix per screen** (JSON) that pairs state × viewport × theme with the mockup/screenshot pair and declares exceptions with a `label` and reason.
 - The image is cut into **named regions** (top bar, content, bottom navigation, dialog or sheet), each with its own threshold. A pair takes the status of its worst region: **pass / review / fail**.
 - The report (`report.html`) has side-by-side, 50 % overlay, diff map and average color per region. Average color exists because a small tone change doesn't show up in the %.
-- **Reference thresholds (Bille web):**
+- **Starting-point thresholds (web):**
 
   | Region | Pass | Review |
   |---|---|---|
@@ -58,7 +58,7 @@ Comes from Bille's process (web and Android, October 2026). Home went from 7.26 
   3. `mask`, only if it occupies the same place on both sides.
 
   An exception not listed in the inventory doesn't count.
-- Reference implementation: `Simonpedro/bille` → `docs/brand/tools/compare/` (`run.mjs`, pixelmatch, `matrices/`, `regions/`).
+- **Building it:** render the mockup and capture the app with Playwright; diff each named region with pixelmatch (anti-aliasing tolerance ~0.1); drive it from a per-screen JSON matrix plus region profiles (JSON, per device/screen type); emit `results.json` and an HTML report. A `--gate` flag exits non-zero if any pair isn't "pass".
 
 ## 4. By-eye review (this is what approves)
 
@@ -66,15 +66,15 @@ With the screenshots side by side and the report, walk the inventory and mark ea
 
 - Copy, word for word, against the copy doc.
 - Exact brand colors: a similar gray is not the ink.
-- The app's domain rules (in Bille: terracotta only for expenses, currencies never summed).
+- The app's domain rules (e.g., a color reserved for a single meaning, values that must never be summed).
 - Logic edges: undo, mixed results, boundary states.
 - Accessibility: screen-reader labels, touch targets, focus.
 
-Feedback goes as a **PR review, 2 rounds max**; after that the product owner (Simon) decides. With design's OK written on the PR and checks green, the implementer merges per the project's merge rules.
+Feedback goes as a **PR review, 2 rounds max**; after that the product owner decides. With design's OK written on the PR and checks green, the implementer merges per the project's merge rules.
 
 ## Rules
 
-1. **Never raise a threshold to make something pass.** If it fails, fix the mockup or the app. Changing a threshold is a written decision, region by region, approved by the product owner (Simon).
+1. **Never raise a threshold to make something pass.** If it fails, fix the mockup or the app. Changing a threshold is a written decision, region by region, approved by the product owner.
 2. **The mockup is the truth.** If you want to deviate, ask first. If accepted, the mockup is updated.
 3. **A failure is not a verdict.** It may be an outdated mockup or different data. The verifier needs upkeep too: on a structural change, update the mockup first.
 4. **Copy lives in docs** and the app copies it literally. New text is documented before it's verified.
@@ -82,7 +82,7 @@ Feedback goes as a **PR review, 2 rounds max**; after that the product owner (Si
 
 ## Native platforms (Android, iOS)
 
-Simon's rule (Oct 14, Bille Android): **platform patterns and standard components come before 100 % parity with the mockup.** On Android that means Material 3; on iOS, apply the same with the HIG and SwiftUI/UIKit components. The inventory marks each part as brand or platform.
+Rule: **platform patterns and standard components come before 100 % parity with the mockup.** On Android that means Material 3; on iOS, apply the same with the HIG and SwiftUI/UIKit components. The inventory marks each part as brand or platform.
 
 **Brand (non-negotiable; blocks even if the % passes):** colors and tokens, typography, copy, amount and date formats, icons, which elements exist and their order.
 
@@ -94,7 +94,7 @@ Simon's rule (Oct 14, Bille Android): **platform patterns and standard component
 - Platform touch targets: 48 dp on Android, 44 pt on iOS.
 
 **How it's applied:**
-- Native thresholds are looser and set per screen in the matrix, with their reason. Bille Android, Movements:
+- Native thresholds are looser and set per screen in the matrix, with their reason. Example native thresholds (an Android list screen):
 
   | Region | Pass | Review |
   |---|---|---|
@@ -103,13 +103,13 @@ Simon's rule (Oct 14, Bille Android): **platform patterns and standard component
   | Top bar | ≤ 1 % | ≤ 3 % |
   | Navigation | ≤ 0.75 % | ≤ 2 % |
 
-- An accepted platform difference is carried into the mockup, not the threshold. E.g., in Bille Android the active tab kept a line instead of a pill, and the mockup was adjusted.
+- An accepted platform difference is carried into the mockup, not the threshold. E.g., the app's active-tab indicator was kept and the mockup was adjusted to match.
 - **FAIL on native:**
   - An inventory element is missing or extra.
   - Different copy, color, typography, icon or amount.
   - Sections in a different order.
   - A platform deviation not listed in the inventory. Ask first; it is not assumed accepted.
-- If a native pattern changes visible behavior (e.g., a search that expands to full screen), the product owner (Simon) decides, and those pairs move to manual review.
+- If a native pattern changes visible behavior (e.g., a search that expands to full screen), the product owner decides, and those pairs move to manual review.
 
 ## Chaining with ux-complexity-gate
 

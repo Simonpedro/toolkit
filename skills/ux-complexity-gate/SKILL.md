@@ -9,7 +9,7 @@ description: >-
 ---
 # Complexity gate
 
-Comes from the research done for Profe (a redesign for non-technical teachers). It measures whether a screen and the app are easy to use; fidelity to the mockup is measured by `design-fidelity-gate`. **It is run by a verifier other than whoever designed or implemented.** It hasn't been used in production yet, so thresholds marked *calibrate* are proposals.
+Based on usability research and standards: Nielsen severity ratings, WCAG 2.5.8 target size, thumb-zone reach, cognitive walkthrough, and SEQ/UMUX-Lite for real users. It measures whether a screen and the app are easy to use; fidelity to the mockup is measured by `design-fidelity-gate`. **It is run by a verifier other than whoever designed or implemented.** Thresholds marked *calibrate* are proposals: fix them after your first ~5 approved screens.
 
 ## Inputs
 
@@ -73,7 +73,7 @@ Viewports: one Android (412×915) and one iPhone (390×844).
 - **FAIL:** any S4, or an automated S3, or a visual S3 with majority on P1, P10, P11 or P12. At mockup stage it goes back to Design; at implemented stage it blocks the merge.
 - **REVIEW:** only S2, or another visual S3. Doesn't block if the reviewer accepts it in writing on the PR; each accepted S2 opens a ticket.
 - **PASS:** nothing, or cosmetic only.
-- 2 rounds max; after that the product owner (Simon) decides. **Never loosen a threshold to make it pass:** fix the mockup or the app.
+- 2 rounds max; after that the product owner decides. **Never loosen a threshold to make it pass:** fix the mockup or the app.
 - The report goes as a PR comment, with blockers, warnings, metrics and taps per task.
 
 ## Platforms
@@ -83,7 +83,7 @@ The core applies equally to web, Android and iOS. What changes:
 - **Touch targets:** the platform's (48 dp on Android, 44 pt on iOS).
 - **Back (A6):** on Android, system or predictive back; on iOS, swipe-back and the bar button.
 - **Bar (A1):** Material NavigationBar or iOS tab bar, always 3 to 5 destinations.
-- **Measurement:** on web, DOM with Playwright + axe. On native, from the semantics/accessibility tree (Compose semantics, XCUITest), or by the vision agent on the fidelity gate's screenshots. Not built yet.
+- **Measurement:** on web, DOM with Playwright + axe. On native, from the semantics/accessibility tree (Compose semantics, XCUITest), or by the vision agent on the fidelity gate's screenshots.
 
 Measurement details and the vision agent prompt are in [`reference.md`](reference.md).
 
