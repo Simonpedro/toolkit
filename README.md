@@ -2,6 +2,26 @@
 
 Cross-app software-development practices for Simon's apps (Bille, Profe, Chatty, …) and the agents that build them. The goal is that a process that works well in one app becomes the standard for all of them.
 
+## Install
+
+Uses the [`skills`](https://github.com/vercel-labs/skills) CLI, same as `mattpocock/skills`:
+
+```bash
+# all skills, globally, for Claude Code and Cursor
+npx skills add Simonpedro/toolkit -g -a claude-code -a cursor -y
+
+# one skill
+npx skills add Simonpedro/toolkit --skill ux-complexity-gate -g
+
+# see what's available
+npx skills add Simonpedro/toolkit --list
+
+# pull the latest versions
+npx skills update
+```
+
+Drop `-g` to install into the current project instead.
+
 ## Structure
 
 Each skill is a folder under `skills/` with a `SKILL.md`. The file opens with YAML frontmatter (`name` and `description`, where the description says when to use it). Optional supporting files sit next to it.
