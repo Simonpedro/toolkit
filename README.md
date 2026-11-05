@@ -17,7 +17,7 @@ npx skills add Simonpedro/toolkit -g -a claude-code -a cursor -y --skill <name>
 npx skills add Simonpedro/toolkit --list
 
 # Update installed skills
-npx skills update
+npx skills update -g   # drop -g for project installs
 ```
 
 Drop `-g` to install into the current project instead of globally.
