@@ -39,4 +39,11 @@ Each skill is a folder under `skills/` with a `SKILL.md`. The file opens with YA
 2. Implement against the approved mockup.
 3. `design-fidelity-gate` on the implementation.
 4. `ux-complexity-gate` on the **implemented screen**.
-5. Merge when both gates are green.
+5. Web only: a non-blocking [Modern Web Guidance](https://github.com/GoogleChrome/modern-web-guidance) review of the changes (accessibility, HTML/CSS over JS, performance, security).
+6. Merge when both gates are green.
+
+## Recommended external skills
+
+| Skill | When to use it | Install |
+|---|---|---|
+| [Modern Web Guidance](https://github.com/GoogleChrome/modern-web-guidance) | Any web front-end work (not native apps): agents consult it while building UI, it reviews changes before merge, and `npx modern-web-guidance legacy-scan .` finds outdated patterns to modernize. | `npx skills add GoogleChrome/modern-web-guidance -g -a claude-code -a cursor -y` |
